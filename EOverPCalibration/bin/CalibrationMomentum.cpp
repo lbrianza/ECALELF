@@ -64,7 +64,7 @@ int main(int argc, char** argv)
     
 
   std::string configFileName = argv[1];
-  boost::shared_ptr<edm::ParameterSet> parameterSet = edm::readConfig(configFileName);
+  std::shared_ptr<edm::ParameterSet> parameterSet = edm::readConfig(configFileName);
   edm::ParameterSet Options = parameterSet -> getParameter<edm::ParameterSet>("Options");
   //  parameterSet.reset();
 
