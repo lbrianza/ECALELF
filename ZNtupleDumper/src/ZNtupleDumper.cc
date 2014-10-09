@@ -51,6 +51,8 @@
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
+#include "FWCore/Utilities/interface/EDGetToken.h"
+
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 
@@ -175,8 +177,8 @@ private:
   edm::InputTag BeamSpotTAG;
   // input tag for electrons
   edm::InputTag electronsTAG;
-  edm::InputTag recHitCollectionEBTAG;
-  edm::InputTag recHitCollectionEETAG;
+  edm::EDGetTokenT<EcalRecHitCollection> recHitCollectionEBTAG;
+  edm::EDGetTokenT<EcalRecHitCollection> recHitCollectionEETAG;
   edm::InputTag EESuperClustersTAG;
   // input rho
   edm::InputTag rhoTAG;
@@ -452,8 +454,8 @@ ZNtupleDumper::ZNtupleDumper(const edm::ParameterSet& iConfig):
   vtxCollectionTAG(iConfig.getParameter<edm::InputTag>("vertexCollection")),
   BeamSpotTAG(iConfig.getParameter<edm::InputTag>("BeamSpotCollection")),
   electronsTAG(iConfig.getParameter<edm::InputTag>("electronCollection")),
-  recHitCollectionEBTAG(iConfig.getParameter<edm::InputTag>("recHitCollectionEB")),
-  recHitCollectionEETAG(iConfig.getParameter<edm::InputTag>("recHitCollectionEE")),
+  recHitCollectionEBTAG(consumes<EcalRecHitCollection>(iConfig.getParameter<edm::InputTag>( "recHitCollectionEB" ))),
+  recHitCollectionEETAG(consumes<EcalRecHitCollection>(iConfig.getParameter<edm::InputTag>( "recHitCollectionEE" ))),
   EESuperClustersTAG(iConfig.getParameter<edm::InputTag>("EESuperClusterCollection")),
   rhoTAG(iConfig.getParameter<edm::InputTag>("rhoFastJet")),
   conversionsProducerTAG(iConfig.getParameter<edm::InputTag>("conversionCollection")),
@@ -1989,9 +1991,9 @@ void ZNtupleDumper::TreeSetEleIDVar(const pat::Electron& electron1, int index){
   deltaPhiSuperClusterTrackAtVtx[index]  = electron1.deltaPhiSuperClusterTrackAtVtx();
   deltaEtaSuperClusterTrackAtVtx[index]  = electron1.deltaEtaSuperClusterTrackAtVtx();
   hOverE[index] = electron1.hadronicOverEm();
-  pfMVA[index]   = electron1.mva();
+  pfMVA[index]   = electron1.mva_e_pi();
   hasMatchedConversion[index] = ConversionTools::hasMatchedConversion(electron1, conversionsHandle, bsHandle->position());
-  maxNumberOfExpectedMissingHits[index] = electron1.gsfTrack()->trackerExpectedHitsInner().numberOfLostHits();
+  maxNumberOfExpectedMissingHits[index] = electron1.gsfTrack()->hitPattern().numberOfLostHits(reco::HitPattern::MISSING_INNER_HITS);
 
 //   if (primaryVertexHandle->size() > 0) {
 //     reco::VertexRef vtx(primaryVertexHandle, 0);    
