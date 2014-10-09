@@ -38,6 +38,7 @@
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Framework/interface/ESHandle.h"
+#include "FWCore/Utilities/interface/EDGetToken.h"  //////////
 // for the output
 #include "DataFormats/Common/interface/ValueMap.h"
 
@@ -112,8 +113,8 @@ private:
   
   /// input tag for electrons
   edm::InputTag electronsTAG;
-  edm::InputTag recHitCollectionEBTAG;
-  edm::InputTag recHitCollectionEETAG;
+  edm::EDGetTokenT <EcalRecHitCollection> recHitCollectionEBTAG;
+  edm::EDGetTokenT <EcalRecHitCollection> recHitCollectionEETAG;
 
   /// input rho
   edm::InputTag rhoTAG;
@@ -198,6 +199,14 @@ private:
 // static data member definitions
 //
 
+//void setRecHitCollectionEBTAG( const edm::EDGetTokenT<EcalRecHitCollection>& recHitCollectionEBTAG_) {
+//  recHitCollectionEBTAG = recHitCollectionEBTAG_;
+//}
+
+//void setRecHitCollectionEETAG( const edm::EDGetTokenT<EcalRecHitCollection>& recHitCollectionEETAG_) {
+//  recHitCollectionEETAG = recHitCollectionEETAG_;
+//}
+
 //
 // constructors and destructor
 //
@@ -206,8 +215,8 @@ EleNewEnergiesProducer::EleNewEnergiesProducer(const edm::ParameterSet& iConfig)
   vtxCollectionTAG(iConfig.getParameter<edm::InputTag>("vertexCollection")),
   BeamSpotTAG(iConfig.getParameter<edm::InputTag>("BeamSpotCollection")),
   electronsTAG(iConfig.getParameter<edm::InputTag>("electronCollection")),
-  recHitCollectionEBTAG(iConfig.getParameter<edm::InputTag>("recHitCollectionEB")),
-  recHitCollectionEETAG(iConfig.getParameter<edm::InputTag>("recHitCollectionEE")),
+  recHitCollectionEBTAG(consumes<EcalRecHitCollection>(iConfig.getParameter<edm::InputTag>( "recHitCollectionEB" ))),
+  recHitCollectionEETAG(consumes<EcalRecHitCollection>(iConfig.getParameter<edm::InputTag>( "recHitCollectionEE" ))),
   rhoTAG(iConfig.getParameter<edm::InputTag>("rhoFastJet")),
   conversionsProducerTAG(iConfig.getParameter<edm::InputTag>("conversionCollection")),
   //  foutName(iConfig.getParameter<std::string>("foutName")),
