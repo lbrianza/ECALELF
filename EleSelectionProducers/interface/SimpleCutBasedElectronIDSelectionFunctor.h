@@ -475,7 +475,7 @@ class SimpleCutBasedElectronIDSelectionFunctor : public Selector<reco::GsfElectr
     Double_t Dphi     = electron.deltaPhiSuperClusterTrackAtVtx();
     Double_t Deta     = electron.deltaEtaSuperClusterTrackAtVtx();
     Double_t HoE      = electron.hadronicOverEm();
-    Double_t pfMVA    = electron.mva();
+    Double_t pfMVA    = electron.mva_e_pi();
     // get the variables
     Double_t pt         = electron.pt();
     
@@ -526,7 +526,7 @@ class SimpleCutBasedElectronIDSelectionFunctor : public Selector<reco::GsfElectr
     Bool_t isConv = fabs(dist) < 0.02 && fabs(dcot) < 0.02;
 #endif
 
-    Int_t innerHits = electron.gsfTrack()->trackerExpectedHitsInner().numberOfHits();
+    Int_t innerHits = electron.gsfTrack()->hitPattern().numberOfHits(reco::HitPattern::TRACK_HITS);
     bool hasMatchedConversion = ConversionTools::hasMatchedConversion(electron, ConversionsHandle_, BeamSpotHandle_->position());
 
     Double_t absEtaSC = fabs(electron.superCluster()->eta());
