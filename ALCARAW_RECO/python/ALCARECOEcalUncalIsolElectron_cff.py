@@ -5,7 +5,9 @@ import FWCore.ParameterSet.Config as cms
 from Calibration.ALCARAW_RECO.ALCARECOEcalCalIsolElectron_cff import *
 from Configuration.StandardSequences.RawToDigi_Data_cff import *
 from RecoLocalCalo.Configuration.RecoLocalCalo_cff import *
-ecalUncalibRecHitSequence = cms.Sequence(ecalGlobalUncalibRecHit * ecalDetIdToBeRecovered)
+from RecoLocalCalo.EcalRecProducers.ecalMultiFitUncalibRecHit_cfi import *
+
+ecalUncalibRecHitSequence = cms.Sequence(ecalMultiFitUncalibRecHit * ecalDetIdToBeRecovered)
         
 uncalibRecHitSeq = cms.Sequence( (ecalDigis + ecalPreshowerDigis) * ecalUncalibRecHitSequence)
 
