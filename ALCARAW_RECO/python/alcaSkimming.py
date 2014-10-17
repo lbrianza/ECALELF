@@ -286,6 +286,12 @@ else:
             process.GlobalTag.globaltag = 'GR_R_62_V3::All'
             if(options.files==""):
                 process.source.fileNames=[ 'root://cms-xrd-global.cern.ch//store/data/Run2012D/DoubleElectron/AOD/15Apr2014-v1/00000/0EA11D35-0CD5-E311-862E-0025905A6070.root' ]
+    elif(re.match("CMSSW_7_2_0_pre7.*",CMSSW_VERSION)):
+        if(MC):
+            print "[INFO] Using GT START72_V1::ALl"
+            process.GlobalTag.globaltag = 'START72_V1::All'
+        else:
+            process.GlobalTag.globaltag = 'MC_72_V1::All' # 5_3_3 Prompt
     else:
         print "[ERROR]::Global Tag not set for CMSSW_VERSION: ", CMSSW_VERSION
         sys.exit(1)
