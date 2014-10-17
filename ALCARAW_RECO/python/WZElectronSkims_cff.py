@@ -72,7 +72,7 @@ selectedElectrons = cms.EDFilter("GsfElectronRefSelector",
 PassingVeryLooseId = selectedElectrons.clone(
     cut = cms.string(
     selectedElectrons.cut.value() +
-    " && (gsfTrack.trackerExpectedHitsInner.numberOfHits<=1)" #wrt std WP90 allowing 1 numberOfMissingExpectedHits
+    " && (gsfTrack.hitPattern().numberOfHits(\'TRACK_HITS\')<=1)" #wrt std WP90 allowing 1 numberOfMissingExpectedHits
     " && ((isEB"
     " && ( dr03TkSumPt/p4.Pt <0.2 "#&& dr03EcalRecHitSumEt/p4.Pt < 0.3
     " && dr03HcalTowerSumEt/p4.Pt  < 0.2 )"
@@ -95,7 +95,7 @@ PassingVeryLooseId = selectedElectrons.clone(
 PassingMediumId = selectedElectrons.clone(
     cut = cms.string(
     selectedElectrons.cut.value() +
-    " && (gsfTrack.trackerExpectedHitsInner.numberOfHits<=1)" #wrt std WP90 allowing 1 numberOfMissingExpectedHits
+    " && (gsfTrack.hitPattern().numberOfHits(\'TRACK_HITS\')<=1)" #wrt std WP90 allowing 1 numberOfMissingExpectedHits
     " && ((isEB"
     " && ( dr03TkSumPt/p4.Pt <0.2 "#&& dr03EcalRecHitSumEt/p4.Pt < 0.3
     " && dr03HcalTowerSumEt/p4.Pt  < 0.2 )"
@@ -119,7 +119,7 @@ PassingMediumId = selectedElectrons.clone(
 PassingTightId = selectedElectrons.clone(
     cut = cms.string(
     selectedElectrons.cut.value() +
-    " && (gsfTrack.trackerExpectedHitsInner.numberOfHits<=0)" #wrt std WP90 allowing 1 numberOfMissingExpectedHits
+    " && (gsfTrack.hitPattern().numberOfHits(\'TRACK_HITS\')<=0)" #wrt std WP90 allowing 1 numberOfMissingExpectedHits
     " && ((isEB"
     " && ( dr03TkSumPt/p4.Pt <0.2 "#&& dr03EcalRecHitSumEt/p4.Pt < 0.3
     " && dr03HcalTowerSumEt/p4.Pt  < 0.2 )"
