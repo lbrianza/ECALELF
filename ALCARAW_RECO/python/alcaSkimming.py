@@ -402,7 +402,7 @@ else:
     process.trivialCond = cms.Sequence( EcalTrivialConditionRetriever )
 
 
-if(re.match("CMSSW_6_.*", CMSSW_VERSION)):
+if(re.match("CMSSW_6_.*", CMSSW_VERSION) or re.match("CMSSW_7_.*", CMSSW_VERSION) ):
     process.alcarerecoSeq=cms.Sequence( process.trivialCond * process.sandboxPFRerecoSeq * (process.seqALCARECOEcalCalElectronRECO + process.reducedEcalRecHitsES))
 else:
     process.alcarerecoSeq=cms.Sequence( process.trivialCond * process.sandboxRerecoSeq * (process.seqALCARECOEcalCalElectronRECO + process.reducedEcalRecHitsES))
@@ -786,12 +786,12 @@ process.eleNewEnergiesProducer.recHitCollectionEB = cms.InputTag("alCaIsolatedEl
 process.eleNewEnergiesProducer.recHitCollectionEE = cms.InputTag("alCaIsolatedElectrons", "alcaEndcapHits")
 
 if(options.type=="ALCARERECO"):        
-    process.ecalRecHit.EBuncalibRecHitCollection = cms.InputTag("ecalGlobalUncalibRecHit","EcalUncalibRecHitsEB")
-    process.ecalRecHit.EEuncalibRecHitCollection = cms.InputTag("ecalGlobalUncalibRecHit","EcalUncalibRecHitsEE")
+    process.ecalRecHit.EBuncalibRecHitCollection = cms.InputTag("ecalMultiFitUncalibRecHit","EcalUncalibRecHitsEB")
+    process.ecalRecHit.EEuncalibRecHitCollection = cms.InputTag("ecalMultiFitUncalibRecHit","EcalUncalibRecHitsEE")
 
     process.correctedHybridSuperClusters.corectedSuperClusterCollection = 'recalibSC'
     process.correctedMulti5x5SuperClustersWithPreshower.corectedSuperClusterCollection = 'endcapRecalibSC'
-    if(re.match("CMSSW_5_.*",CMSSW_VERSION) or re.match("CMSSW_6_.*", CMSSW_VERSION)):
+    if(re.match("CMSSW_5_.*",CMSSW_VERSION) or re.match("CMSSW_6_.*", CMSSW_VERSION) or re.match("CMSSW_7_.*", CMSSW_VERSION)):
         process.multi5x5PreshowerClusterShape.endcapSClusterProducer = "correctedMulti5x5SuperClustersWithPreshower:endcapRecalibSC"
 
     # in sandboxRereco
