@@ -17,7 +17,7 @@ OutALCARECOEcalCalElectron_specific = cms.untracked.vstring(
 OutALCARECOEcalCalElectron_noDrop = cms.PSet(
     # put this if you have a filter
     SelectEvents = cms.untracked.PSet(
-    SelectEvents = cms.vstring('pathALCARECOEcalCalZElectron', 'pathALCARECOEcalCalWElectron', 'pathALCARECOEcalCalZSCElectron')
+    SelectEvents = cms.vstring('pathALCARECOEcalCalZElectron', 'pathALCARECOEcalCalWElectron', 'pathALCARECOEcalCalZSCElectron','pathALCARECOEcalCalZElectronStream', 'pathALCARECOEcalCalWElectronStream')
     ),
     outputCommands = cms.untracked.vstring( 
     'keep *_pfMet_*_*', # met for Wenu selection
@@ -59,6 +59,8 @@ OutALCARECOEcalCalElectron_noDrop = cms.PSet(
     'keep *EcalRecHit*_reducedEcalRecHitsES_alCaRecHitsES_*',
     'keep *CaloCluster*_*particleFlowEGamma*_*EBEEClusters*_*',
     'keep *CaloCluster*_*particleFlowEGamma*_*ESClusters*_*',
+    'keep *_hltFixedGridRhoFastjetAllCaloForMuons_*_*', #for electron stream
+    'keep *_hltMet_*_*', #for electron stream
     )
 )
 

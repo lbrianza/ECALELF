@@ -19,9 +19,11 @@ OutALCARECOEcalUncalElectron.outputCommands += cms.untracked.vstring(
     'drop recoPreshowerCluster*_*_*_*',
     'drop *EcalRecHit*_reducedEcalRecHitsES*_*_*',
     'keep reco*Clusters_pfElectronTranslator_*_*'
+    'keep *_hltFixedGridRhoFastjetAllCaloForMuons_*_*',
+    'keep *_hltMet_*_*',
     )
 
 OutALCARECOEcalUncalElectron.SelectEvents = cms.untracked.PSet(
-    SelectEvents = cms.vstring('pathALCARECOEcalUncalZElectron', 'pathALCARECOEcalUncalZSCElectron', 'pathALCARECOEcalUncalWElectron')
+    SelectEvents = cms.vstring('pathALCARECOEcalUncalZElectron', 'pathALCARECOEcalUncalZSCElectron', 'pathALCARECOEcalUncalWElectron', 'pathALCARECOEcalUncalWElectronStream', 'pathALCARECOEcalUncalZElectron')
     )
 
