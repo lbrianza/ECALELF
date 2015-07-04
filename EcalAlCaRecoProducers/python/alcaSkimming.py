@@ -53,6 +53,11 @@ options.register('pdfSyst',
                  VarParsing.VarParsing.multiplicity.singleton, # singleton or list
                  VarParsing.VarParsing.varType.int,          # string, int, or float
                  "bool: pdfSyst=1 true, pdfSyst=0 false")
+options.register('electronStream',
+                 0, #default value False
+                 VarParsing.VarParsing.multiplicity.singleton, # singleton or list
+                 VarParsing.VarParsing.varType.int,          # string, int, or float
+                 "bool: isElectronStream=1 true, isElectronStream=0 false")
                  
 ### setup any defaults you want
 options.output="alcaSkimALCARAW.root"
@@ -382,6 +387,8 @@ process.NtupleFilter = copy.deepcopy(hltHighLevel)
 process.NtupleFilter.throw = cms.bool(False)
 process.NtupleFilter.HLTPaths = [ 'pathALCARECOEcalUncalZElectron',   'pathALCARECOEcalUncalWElectron',
                                   'pathALCARECOEcalCalZElectron',     'pathALCARECOEcalCalWElectron',
+                                  'pathALCARECOEcalUncalZElectronStream',   'pathALCARECOEcalUncalWElectronStream',
+                                  'pathALCARECOEcalCalZElectronStream',     'pathALCARECOEcalCalWElectronStream',
                                   'pathALCARECOEcalUncalZSCElectron', 'pathALCARECOEcalCalZSCElectron',
                                   'pathALCARECOEcalUncalSingleElectron', 'pathALCARECOEcalCalSingleElectron',
                                  ]
@@ -398,11 +405,13 @@ if(ZSkim):
   # process.NtupleFilterSeq= cms.Sequence(process.NtupleFilter)
     process.NtupleFilter.HLTPaths = [ 'pathALCARECOEcalCalZElectron', 'pathALCARECOEcalUncalZElectron',
                                       'pathALCARECOEcalCalZSCElectron', 'pathALCARECOEcalUncalZSCElectron',
+                                      'pathALCARECOEcalCalZElectronStream', 'pathALCARECOEcalUncalZElectronStream',
                                       ]
 elif(WSkim):
     process.NtupleFilterSeq = cms.Sequence(process.WZFilter)
     #    process.NtupleFilterSeq= cms.Sequence(process.NtupleFilter)
-    process.NtupleFilter.HLTPaths = [ 'pathALCARECOEcalCalWElectron', 'pathALCARECOEcalUncalWElectron' ]
+    process.NtupleFilter.HLTPaths = [ 'pathALCARECOEcalCalWElectron', 'pathALCARECOEcalUncalWElectron',
+                                      'pathALCARECOEcalCalWElectronStream', 'pathALCARECOEcalUncalWElectronStream']
 elif(ZmmgSkim):
     process.NtupleFilterSeq = cms.Sequence(process.ZmmgSkimSeq)
     process.NtupleFilter.HLTPaths = [ 'pathALCARECOEcalCalZmmgPhoton', 'pathALCARECOEcalUncalZmmgPhoton' ]
@@ -746,17 +755,17 @@ else:
 ##############################
 if(options.skim=='WSkim'):
     process.outputALCARAW.SelectEvents = cms.untracked.PSet(
-        SelectEvents = cms.vstring('pathALCARECOEcalUncalWElectron')
+        SelectEvents = cms.vstring('pathALCARECOEcalUncalWElectron','pathALCARECOEcalUncalWElectronStream')
         )
     process.outputALCARECO.SelectEvents = cms.untracked.PSet(
-        SelectEvents = cms.vstring('pathALCARECOEcalCalWElectron')
+        SelectEvents = cms.vstring('pathALCARECOEcalCalWElectron','pathALCARECOEcalCalWElectronStream')
         )
 elif(options.skim=='ZSkim'):
     process.outputALCARAW.SelectEvents = cms.untracked.PSet(
-        SelectEvents = cms.vstring('pathALCARECOEcalUncalZElectron', 'pathALCARECOEcalUncalZSCElectron')
+        SelectEvents = cms.vstring('pathALCARECOEcalUncalZElectron', 'pathALCARECOEcalUncalZSCElectron','pathALCARECOEcalUncalZElectronStream')
         )
     process.outputALCARECO.SelectEvents = cms.untracked.PSet(
-        SelectEvents = cms.vstring('pathALCARECOEcalCalZElectron', 'pathALCARECOEcalCalZSCElectron')
+        SelectEvents = cms.vstring('pathALCARECOEcalCalZElectron', 'pathALCARECOEcalCalZSCElectron','pathALCARECOEcalUncalZElectronStream')
         )
 elif(options.skim=='ZmmgSkim'):
     process.outputALCARAW.SelectEvents = cms.untracked.PSet(
@@ -953,7 +962,9 @@ process.zNtupleDumper.recHitCollectionEE = process.eleNewEnergiesProducer.recHit
 #process.eleRegressionEnergy.recHitCollectionEB = process.eleNewEnergiesProducer.recHitCollectionEB.value()
 #process.eleRegressionEnergy.recHitCollectionEE = process.eleNewEnergiesProducer.recHitCollectionEE.value()
 
-
+if (options.electronStream==1):
+    process.zNtupleDumper.caloMetCollection = cms.InputTag('hltMet')
+    process.zNtupleDumper.rhoFastJet = cms.InputTag('hltFixedGridRhoFastjetAllCaloForMuons')
 
 ############################
 ## Dump the output Python ##
