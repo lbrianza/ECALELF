@@ -120,7 +120,9 @@
 
 #include "DataFormats/METReco/interface/PFMET.h"
 #include "DataFormats/METReco/interface/PFMETFwd.h"
-
+#include "DataFormats/METReco/interface/CaloMET.h"
+#include "DataFormats/METReco/interface/CaloMETFwd.h"
+#include "DataFormats/METReco/interface/CaloMETCollection.h"
 // HLT trigger
 #include "FWCore/Framework/interface/TriggerNamesService.h"
 #include <FWCore/Common/interface/TriggerNames.h>
@@ -148,7 +150,6 @@ public:
 	~ZNtupleDumper();
 
 	static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
-
 
 private:
 	virtual void beginJob() ;
@@ -184,6 +185,7 @@ private:
 	edm::Handle< GenEventInfoProduct >  GenEventInfoHandle;
 	edm::Handle<reco::ConversionCollection> conversionsHandle;
 	edm::Handle< reco::PFMETCollection > metHandle;
+        edm::Handle< reco::CaloMETCollection > caloMetHandle;
 	edm::Handle<edm::TriggerResults> triggerResultsHandle;
 	edm::Handle<edm::TriggerResults> WZSkimResultsHandle;
 	edm::Handle<EcalRecHitCollection> ESRechitsHandle;
@@ -214,6 +216,7 @@ private:
 	edm::EDGetTokenT<std::vector<PileupSummaryInfo> > pileupInfoToken_;
 	edm::EDGetTokenT<reco::ConversionCollection> conversionsProducerToken_;
 	edm::EDGetTokenT<reco::PFMETCollection> metToken_;
+        edm::EDGetTokenT<reco::CaloMETCollection> caloMetToken_;
 	edm::EDGetTokenT<edm::TriggerResults> triggerResultsToken_;
 	edm::EDGetTokenT<edm::TriggerResults> WZSkimResultsToken_;
 	edm::InputTag triggerResultsTAG, WZSkimResultsTAG;
@@ -293,6 +296,7 @@ private:
 
 	Float_t e3x3SCEle[3];   //< sum of the recHit energy in 3x3 matrix centered at the seed of the SC
 	Float_t e5x5SCEle[3];   ///< sum of the recHit energy in 5x5 matrix centered at the seed of the SC
+	Float_t efull5x5SCEle[3];   ///< full 5x5
 	Float_t eSeedSCEle[3];
 	Float_t pModeGsfEle[3];  ///< track momentum from Gsf Track (mode)
 	Float_t pAtVtxGsfEle[3]; ///< momentum estimated at the vertex
@@ -308,6 +312,7 @@ private:
 
 	//   Float_t invMass_e3x3;
 	Float_t invMass_e5x5;
+	Float_t invMass_efull5x5;
 	Float_t invMass_rawSC;
 	Float_t invMass_rawSC_must;
 	Float_t invMass_rawSC_esSC;
@@ -457,6 +462,8 @@ private:
 		ZSC,
 		ZMMG,
 		PARTGUN,
+		WSTREAM,
+		ZSTREAM,
 		UNKNOWN,
 		SINGLEELE, //no skim, no preselection and no selection are applied
 		DEBUG_T
@@ -492,6 +499,7 @@ ZNtupleDumper::ZNtupleDumper(const edm::ParameterSet& iConfig):
 	pileupInfoToken_(consumes<std::vector<PileupSummaryInfo>>(iConfig.getParameter<edm::InputTag>("pileupInfo"))),
 	conversionsProducerToken_(consumes<reco::ConversionCollection>(iConfig.getParameter<edm::InputTag>("conversionCollection"))),
 	metToken_(consumes<reco::PFMETCollection>(iConfig.getParameter<edm::InputTag>("metCollection"))),
+        caloMetToken_(consumes<reco::CaloMETCollection>(iConfig.getParameter<edm::InputTag>("caloMetCollection"))), //for the stream
 	triggerResultsToken_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("triggerResultsCollection"))),
 	WZSkimResultsToken_(consumes<edm::TriggerResults>(iConfig.getParameter<edm::InputTag>("WZSkimResultsCollection"))),
 	triggerResultsTAG(iConfig.getParameter<edm::InputTag>("triggerResultsCollection")),
@@ -621,7 +629,11 @@ void ZNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 				if(WZSkimResultsHandle->accept(*alcaSkimPath_itr)) {
 					skipEvent = false;
 					std::string hltName_str(alcaSkimPathNames.triggerName(*alcaSkimPath_itr));
-					if(hltName_str.find("WElectron") != std::string::npos)
+					if(hltName_str.find("WElectronStream")!=std::string::npos)
+					        eventType=WSTREAM;
+					else if(hltName_str.find("ZElectronStream")!=std::string::npos)
+					        eventType=ZSTREAM;
+					else if(hltName_str.find("WElectron") != std::string::npos)
 						eventType = WENU;
 					else if(hltName_str.find("ZSCElectron") != std::string::npos)
 						eventType = ZSC;
@@ -679,11 +691,15 @@ void ZNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	iEvent.getByToken(beamSpotToken_, bsHandle);
 	iEvent.getByToken(rhoToken_, rhoHandle);
 
-	iEvent.getByToken(metToken_, metHandle);
 	iEvent.getByToken(recHitCollectionESToken_, ESRechitsHandle);
-	//if(metHandle.isValid()==false) iEvent.getByType(metHandle);
-	reco::PFMET met = metHandle.isValid() ? ((*metHandle))[0] : reco::PFMET(); /// \todo use corrected phi distribution
 
+	iEvent.getByToken(metToken_, metHandle);
+	iEvent.getByToken(caloMetToken_, caloMetHandle); 
+
+	reco::MET met =  ((*metHandle))[0];
+	if (eventType == WSTREAM) {
+	    met = (*caloMetHandle)[0];
+	  }
 
 	//Here the HLTBits are filled. TriggerResults
 	TreeSetEventSummaryVar(iEvent);
@@ -728,6 +744,7 @@ void ZNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	int nTight   = 0; //number of electrons passing only the tight  ID for preselection
 	int nMedium  = 0; //number of electrons passing only the medium ID for preselection
 	int nLoose   = 0; //number of electrons passing only the loose  ID for preselection
+	int nEle     = 0; //number of electrons saved in the electron stream
 
 	//if (eventType!=ZMMG) { // count the number of electrons passing the different IDs for preselection and event type determination
 	if (eventType != UNKNOWN) { // count the number of electrons passing the different IDs for preselection and event type determination
@@ -737,6 +754,7 @@ void ZNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 			if( eleIter1->electronID(eleID_tight) )          ++nTight;
 			else if( eleIter1->electronID(eleID_medium) ) ++nMedium;
 			else if( eleIter1->electronID(eleID_loose) )  ++nLoose;
+			nEle++;
 		}
 	}
 
@@ -774,7 +792,7 @@ void ZNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 		if(doEleIDTree) {
 			TreeSetEleIDVar(*eleIter1, *eleIter2);
 		}
-	} else if(eventType == ZEE || eventType == WENU || eventType == UNKNOWN) {
+        } else if(eventType==ZEE || eventType==WENU || eventType==UNKNOWN || eventType==WSTREAM || eventType==ZSTREAM){
 #ifdef DEBUG
 		std::cout << "[DEBUG] Electrons in the event: " << electronsHandle->size() << std::endl;
 #endif
@@ -785,17 +803,18 @@ void ZNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
 			if(! elePreselection(*eleIter1)) continue;
 
-			if(eventType == WENU) {
+			if(eventType == WENU || eventType == WSTREAM) {
 				if(! (eleIter1->electronID(eleID_tight)) ) continue;
 				if( nTight != 1 || nLoose > 0 ) continue; //to be a Wenu event request only 1 ele WP70 in the event
 
 				// MET/MT selection
 				if(  met.et() < 25. ) continue;
 				if( sqrt( 2.*eleIter1->et()*met.et() * (1 - cos(eleIter1->phi() - met.phi()))) < 50. ) continue;
+				
 				if( eleIter1->et() < 30) continue;
 
 				doFill = true;
-				if(eventType == UNKNOWN) eventType = WENU;
+				if(eventType == UNKNOWN) eventType = WENU; //after selection it's clear that it's WENU
 				TreeSetSingleElectronVar(*eleIter1, 0);  //fill first electron
 				TreeSetSingleElectronVar(*eleIter1, -1); // fill fake second electron
 
@@ -1222,6 +1241,7 @@ void ZNtupleDumper::InitNewTree()
 	tree->Branch("R9Ele", R9Ele, "R9Ele[3]/F");
 
 	tree->Branch("e5x5SCEle", e5x5SCEle, "e5x5SCEle[3]/F");
+	tree->Branch("efull5x5SCEle", efull5x5SCEle, "efull5x5SCEle[3]/F");
 	//tree->Branch("eSeedSCEle", eSeedSCEle, "eSeedSCEle[3]/F");
 	tree->Branch("pModeGsfEle", pModeGsfEle, "pModeGsfEle[3]/F");
 	tree->Branch("pAtVtxGsfEle", pAtVtxGsfEle, "pAtVtxGsfEle[3]/F");
@@ -1235,6 +1255,7 @@ void ZNtupleDumper::InitNewTree()
 	tree->Branch("invMass_SC_pho_regrCorr", &invMass_SC_pho_regrCorr,   "invMass_SC_pho_regrCorr/F");
 	//   tree->Branch("invMass_e3x3",    &invMass_e3x3,      "invMass_e3x3/F");
 	tree->Branch("invMass_e5x5",    &invMass_e5x5,      "invMass_e5x5/F");
+	tree->Branch("invMass_efull5x5",    &invMass_efull5x5,      "invMass_efull5x5/F");
 	tree->Branch("invMass_rawSC", &invMass_rawSC,   "invMass_rawSC/F");
 	tree->Branch("invMass_rawSC_must", &invMass_rawSC_must,   "invMass_rawSC_must/F");
 	tree->Branch("invMass_rawSC_esSC", &invMass_rawSC_esSC,   "invMass_rawSC_esSC/F");
@@ -1436,6 +1457,7 @@ void ZNtupleDumper::TreeSetSingleElectronVar(const pat::Electron& electron1, int
 	rawESEnergyPlane2SCEle[index] = GetESPlaneRawEnergy(sc, 2);
 
 	energySCEle_corr[index] = electron1.correctedEcalEnergy();
+	efull5x5SCEle[index] = electron1.full5x5_e5x5(); //check this
 
 	if(sc.isNonnull()) {
 		nHitsSCEle[index] = sc->size();
@@ -1863,6 +1885,9 @@ void ZNtupleDumper:: TreeSetDiElectronVar(const pat::Electron& electron1, const 
 
 	invMass = sqrt(2 * electron1.energy() * electron2.energy() * angle);
 	invMass_e5x5   = sqrt(2 * electron1.e5x5() * electron2.e5x5() *
+	                      angle);
+
+	invMass_efull5x5   = sqrt(2 * electron1.full5x5_e5x5() * electron2.full5x5_e5x5() *
 	                      angle);
 
 	invMass_SC = sqrt(2 * energySCEle[0] * energySCEle[1] *
