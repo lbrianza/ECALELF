@@ -118,6 +118,8 @@
 
 #include "DataFormats/METReco/interface/PFMET.h"
 #include "DataFormats/METReco/interface/PFMETFwd.h"
+#include "DataFormats/METReco/interface/CaloMET.h"
+#include "DataFormats/METReco/interface/CaloMETFwd.h"
 
 // HLT trigger
 #include "FWCore/Framework/interface/TriggerNamesService.h"
@@ -178,6 +180,7 @@ private:
   edm::Handle< GenEventInfoProduct >  GenEventInfoHandle;
   edm::Handle<reco::ConversionCollection> conversionsHandle;
   edm::Handle< reco::PFMETCollection > metHandle;
+  edm::Handle< reco::CaloMETCollection > caloMetHandle;
   edm::Handle<edm::TriggerResults> triggerResultsHandle;
   edm::Handle<edm::TriggerResults> WZSkimResultsHandle;
 
@@ -203,6 +206,7 @@ private:
   edm::InputTag rhoTAG;
   edm::InputTag conversionsProducerTAG;
   edm::InputTag metTAG;
+  edm::InputTag caloMetTAG;
   edm::InputTag triggerResultsTAG;
   edm::InputTag WZSkimResultsTAG;
   std::vector< std::string> hltPaths, SelectEvents;
@@ -448,6 +452,7 @@ ZNtupleDumper::ZNtupleDumper(const edm::ParameterSet& iConfig):
   rhoTAG(iConfig.getParameter<edm::InputTag>("rhoFastJet")),
   conversionsProducerTAG(iConfig.getParameter<edm::InputTag>("conversionCollection")),
   metTAG(iConfig.getParameter<edm::InputTag>("metCollection")),
+  caloMetTAG(iConfig.getParameter<edm::InputTag>("caloMetCollection")),
   triggerResultsTAG(iConfig.getParameter<edm::InputTag>("triggerResultsCollection")),
   WZSkimResultsTAG(iConfig.getParameter<edm::InputTag>("WZSkimResultsCollection")),
   hltPaths(iConfig.getParameter< std::vector<std::string> >("hltPaths")),
@@ -562,7 +567,11 @@ void ZNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       if(WZSkimResultsHandle->accept(*alcaSkimPath_itr)){
 	skipEvent=false;
 	std::string hltName_str(alcaSkimPathNames.triggerName(*alcaSkimPath_itr));
-	if(hltName_str.find("WElectron")!=std::string::npos)
+	if(hltName_str.find("WElectronStream")!=std::string::npos)
+	  eventType=WENU;
+	else if(hltName_str.find("ZElectronStream")!=std::string::npos)
+	  eventType=ZEE;
+	else if(hltName_str.find("WElectron")!=std::string::npos)
 	  eventType=WENU;
 	else if(hltName_str.find("ZSCElectron")!=std::string::npos)
 	  eventType=ZSC;
@@ -618,7 +627,12 @@ void ZNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   iEvent.getByLabel(metTAG, metHandle); 
   //if(metHandle.isValid()==false) iEvent.getByType(metHandle);
   reco::PFMET met = ((*metHandle))[0]; /// \todo use corrected phi distribution
+  reco::CaloMET caloMet;
 
+  if (caloMetHandle.isValid()==true) {
+    iEvent.getByLabel(caloMetTAG, caloMetHandle); 
+    caloMet = ((*caloMetHandle))[0]; //get hlt met
+  }
 
   //Here the HLTBits are filled. TriggerResults
   TreeSetEventSummaryVar(iEvent);
@@ -1000,6 +1014,7 @@ void ZNtupleDumper::endJob()
   if(tree->GetEntries()>0){
     tree->BuildIndex("runNumber","eventNumber");
     if(doEleIDTree)       eleIDTree->BuildIndex("runNumber","eventNumber");
+    if(doExtraCalibTree)  extraCalibTree->BuildIndex("runNumber","eventNumber");
   }
   // save the tree into the file
   tree_file->cd();
@@ -1007,13 +1022,11 @@ void ZNtupleDumper::endJob()
   tree_file->Close();
   
   if(doExtraCalibTree){
-    extraCalibTree->BuildIndex("runNumber","eventNumber");
     extraCalibTreeFile->cd();
     extraCalibTree->Write();  
     extraCalibTreeFile->Close();
   }
   if(doEleIDTree){
-    eleIDTree->BuildIndex("runNumber","eventNumber");
     eleIDTreeFile->cd();
     eleIDTree->Write();
     eleIDTreeFile->Close();
