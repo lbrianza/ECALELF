@@ -418,6 +418,8 @@ private:
     ZSC,
     ZMMG,
     PARTGUN,
+    WSTREAM,
+    ZSTREAM,
     UNKNOWN,
     SINGLEELE, //no skim, no preselection and no selection are applied
     DEBUG
@@ -568,9 +570,9 @@ void ZNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	skipEvent=false;
 	std::string hltName_str(alcaSkimPathNames.triggerName(*alcaSkimPath_itr));
 	if(hltName_str.find("WElectronStream")!=std::string::npos)
-	  eventType=WENU;
+	  eventType=WSTREAM;
 	else if(hltName_str.find("ZElectronStream")!=std::string::npos)
-	  eventType=ZEE;
+	  eventType=ZSTREAM;
 	else if(hltName_str.find("WElectron")!=std::string::npos)
 	  eventType=WENU;
 	else if(hltName_str.find("ZSCElectron")!=std::string::npos)
@@ -718,7 +720,7 @@ void ZNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       TreeSetEleIDVar(*eleIter1, *eleIter2);
     }
   } 
-  else if(eventType==ZEE || eventType==WENU || eventType==UNKNOWN){
+  else if(eventType==ZEE || eventType==WENU || eventType==UNKNOWN || eventType==WSTREAM || eventType==ZSTREAM){
     for( pat::ElectronCollection::const_iterator eleIter1 = electronsHandle->begin();
 	 eleIter1 != electronsHandle->end();
 	 eleIter1++){
@@ -727,14 +729,17 @@ void ZNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       //        continue;
       //      }
 
-      if(eventType==WENU){
-  	if(! eleIter1->electronID("tight") ) continue;
-  	if( nWP70 != 1 || nWP90 > 0 ) continue; //to be a Wenu event request only 1 ele WP70 in the event
+      if(eventType==WENU || eventType==WSTREAM){
+
+	if(eventType==WENU) {
+	  if(! eleIter1->electronID("tight") ) continue;
+	  if( nWP70 != 1 || nWP90 > 0 ) continue; //to be a Wenu event request only 1 ele WP70 in the event
 	
-	// MET/MT selection
-	if(  met.et() < 25. ) continue;
-	if( sqrt( 2.*eleIter1->et()*met.et()*(1 -cos(eleIter1->phi()-met.phi()))) < 50. ) continue;
-	if( eleIter1->et()<30) continue;
+	  // MET/MT selection
+	  if(  met.et() < 25. ) continue;
+	  if( sqrt( 2.*eleIter1->et()*met.et()*(1 -cos(eleIter1->phi()-met.phi()))) < 50. ) continue;
+	  if( eleIter1->et()<30) continue;
+	}
 
 	doFill=true;	
 	if(eventType==UNKNOWN) eventType=WENU;
