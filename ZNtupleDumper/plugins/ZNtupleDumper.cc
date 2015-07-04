@@ -593,7 +593,7 @@ void ZNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 
 
     }
-    //std::cout << "skip event: " << skipEvent << "\t" << eventType << std::endl;
+    //    std::cout << "skip event: " << skipEvent << "\t" << eventType << std::endl;
     //assert(!skipEvent);
     eventTypeCounter[eventType]++;
     if(skipEvent) return; // event not coming from any skim or paths
@@ -774,16 +774,21 @@ void ZNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	  double t1q = t1*t1;
 	  double t2=TMath::Exp(-eleIter2->eta());
 	  double t2q = t2*t2;
+	  
+	  float mass=-99;
 
-	  double angle=1-
-	    ( (1-t1q)*(1-t2q)+4*t1*t2*cos(eleIter1->phi()-eleIter2->phi()))/(
+	  if(eleIter1->parentSuperCluster().isNonnull() && eleIter2->parentSuperCluster().isNonnull()) {
+
+	    double angle=1-
+	      ( (1-t1q)*(1-t2q)+4*t1*t2*cos(eleIter1->phi()-eleIter2->phi()))/(
 									(1+t1q)*(1+t2q)
 									);
-	  float mass = sqrt(2*eleIter1->parentSuperCluster()->energy()*eleIter2->parentSuperCluster()->energy() *angle); //use mustache SC, in order to have the same number of events between alcareco and alcarereco ntuples
+	    mass = sqrt(2*eleIter1->parentSuperCluster()->energy()*eleIter2->parentSuperCluster()->energy() *angle); //use mustache SC, in order to have the same number of events between alcareco and alcarereco ntuples
 
-	  //	  std::cout<<" ele1 SC: "<<eleIter1->superCluster()->energy()<<" ele1 SC must: "<<eleIter1->parentSuperCluster()->energy()<<" eta1: "<<eleIter1->eta()<<" phi1: "<<eleIter1->phi()<<std::endl
+	    //	  std::cout<<" ele1 SC: "<<eleIter1->superCluster()->energy()<<" ele1 SC must: "<<eleIter1->parentSuperCluster()->energy()<<" eta1: "<<eleIter1->eta()<<" phi1: "<<eleIter1->phi()<<std::endl
 	  //		   <<" ele2 SC: "<<eleIter2->superCluster()->energy()<<" ele2 SC must: "<<eleIter2->parentSuperCluster()->energy()<<" eta2: "<<eleIter2->eta()<<" phi2: "<<eleIter2->phi()<<"mass: "<<mass<<std::endl;
-	  
+	  }	  
+
 	  if((mass < 55 || mass > 125)) continue;	  
 	  doFill=true;
 
@@ -1375,7 +1380,8 @@ void ZNtupleDumper::TreeSetSingleElectronVar(const pat::Electron& electron1, int
   }
 
   energySCEle[index]  = electron1.superCluster()->energy();
-  energySCEle_must[index]  = electron1.parentSuperCluster()->energy();
+  if(electron1.parentSuperCluster().isNonnull())
+    energySCEle_must[index]  = electron1.parentSuperCluster()->energy();
   rawEnergySCEle[index]  = electron1.superCluster()->rawEnergy();
   esEnergySCEle[index] = electron1.superCluster()->preshowerEnergy();
 #ifndef CMSSW42X
@@ -1663,7 +1669,8 @@ void ZNtupleDumper::TreeSetSinglePhotonVar(const pat::Photon& photon, int index)
   }
 
   energySCEle[index]  = photon.superCluster()->energy();
-  energySCEle_must[index]  = photon.parentSuperCluster()->energy();
+  if(photon.parentSuperCluster().isNonnull())
+    energySCEle_must[index]  = photon.parentSuperCluster()->energy();
   rawEnergySCEle[index]  = photon.superCluster()->rawEnergy();
   esEnergySCEle[index] = photon.superCluster()->preshowerEnergy();
   //  energySCEle_corr[index] = photon.scEcalEnergy(); //but, I don't think this is the correct energy..
