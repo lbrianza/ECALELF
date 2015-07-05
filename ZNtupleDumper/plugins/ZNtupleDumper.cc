@@ -737,7 +737,7 @@ void ZNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	}
 
 	else if(eventType==WSTREAM) {
-	  //	  if(! eleIter1->electronID("tight") ) continue;
+	  if(! eleIter1->electronID("tightElectronStream") ) continue;
 	  //if( nWP70 != 1 || nWP90 > 0 ) continue; //to be a Wenu event request only 1 ele WP70 in the event
 	
 	  iEvent.getByLabel(caloMetTAG, caloMetHandle); 
