@@ -120,7 +120,7 @@
 #include "DataFormats/METReco/interface/PFMETFwd.h"
 #include "DataFormats/METReco/interface/CaloMET.h"
 #include "DataFormats/METReco/interface/CaloMETFwd.h"
-
+#include "DataFormats/METReco/interface/CaloMETCollection.h"
 // HLT trigger
 #include "FWCore/Framework/interface/TriggerNamesService.h"
 #include <FWCore/Common/interface/TriggerNames.h>
@@ -629,12 +629,7 @@ void ZNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   iEvent.getByLabel(metTAG, metHandle); 
   //if(metHandle.isValid()==false) iEvent.getByType(metHandle);
   reco::PFMET met = ((*metHandle))[0]; /// \todo use corrected phi distribution
-  reco::CaloMET caloMet;
-
-  if (caloMetHandle.isValid()==true) {
-    iEvent.getByLabel(caloMetTAG, caloMetHandle); 
-    caloMet = ((*caloMetHandle))[0]; //get hlt met
-  }
+  //  const reco::CaloMET& caloMet;
 
   //Here the HLTBits are filled. TriggerResults
   TreeSetEventSummaryVar(iEvent);
@@ -738,6 +733,19 @@ void ZNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
 	  // MET/MT selection
 	  if(  met.et() < 25. ) continue;
 	  if( sqrt( 2.*eleIter1->et()*met.et()*(1 -cos(eleIter1->phi()-met.phi()))) < 50. ) continue;
+	  if( eleIter1->et()<30) continue;
+	}
+
+	else if(eventType==WSTREAM) {
+	  //	  if(! eleIter1->electronID("tight") ) continue;
+	  //if( nWP70 != 1 || nWP90 > 0 ) continue; //to be a Wenu event request only 1 ele WP70 in the event
+	
+	  iEvent.getByLabel(caloMetTAG, caloMetHandle); 
+	  if (caloMetHandle.isValid()==false) continue;
+
+	  // MET/MT selection
+	  if( caloMetHandle->at(0).pt() < 25. ) continue;
+	  if( sqrt( 2.*eleIter1->et()*caloMetHandle->at(0).pt()*(1 -cos(eleIter1->phi()-caloMetHandle->at(0).phi()))) < 50. ) continue;
 	  if( eleIter1->et()<30) continue;
 	}
 
