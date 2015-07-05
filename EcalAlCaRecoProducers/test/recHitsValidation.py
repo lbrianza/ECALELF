@@ -69,7 +69,7 @@ eventNumber=694966852
 lumi=466
 eventNumber=685233340
 
-eventNumber=381093446
+eventNumber=-1
 eventMin=-1
 lumi=-1
 
@@ -80,7 +80,7 @@ event_counter=0
 for arg in sys.argv:
     if (arg=='alcareco'):
         print "alcareco"
-        file="/afs/cern.ch/user/l/lbrianza/work/PHD/DEF_ECALELF/CHE_SUCCEDE_IN_ECALELF/CMSSW_7_5_0_pre3/src/Calibration/DoubleElectron-Run2012D/EcalCalZElectron.root"
+        file="/afs/cern.ch/user/l/lbrianza/work/PHD/DEF_ECALELF/CHE_SUCCEDE_IN_ECALELF/STREAM/CMSSW_7_5_0_pre3/src/Calibration/SingleElectron-Run2012D_stream/EcalCalWElectronStream.root"
         file_format = "alcareco"
         break
     elif(arg=='alcarereco'):
@@ -163,6 +163,8 @@ handleRecHitsEE_ALCASKIM = Handle('edm::SortedCollection<EcalRecHit,edm::StrictW
 handleRecHitsEB_ALCARECO = Handle('edm::SortedCollection<EcalRecHit,edm::StrictWeakOrdering<EcalRecHit> >')
 handleRecHitsEE_ALCARECO = Handle('edm::SortedCollection<EcalRecHit,edm::StrictWeakOrdering<EcalRecHit> >')
 
+handleMET = Handle('std::vector<reco::CaloMET>')
+
 if (file_format == 'ALCARECO'):
     processName="ALCASKIM"
     electronTAG = 'electronRecalibSCAssociator'
@@ -193,7 +195,7 @@ elif(file_format == "alcarereco"):
     electronTAG = 'electronRecalibSCAssociator'
     
 
-
+metTAG = 'hltMet'
 
 EErecHitmap_ele1 = TH2F("EErecHitmap_ele1", "EErecHitmap_ele1",
                    100,0,100,
@@ -229,6 +231,9 @@ for event in events:
     event.getByLabel(electronTAG, handleElectrons)
     #    print file_format, file, electronTAG        
     electrons = handleElectrons.product()
+
+    event.getByLabel(metTAG, handleMET)
+    met = handleMET.product()
 
     #    event.getByLabel("reducedEcalRecHitsEB", "", processName, handleRecHitsEB)
     #    event.getByLabel("reducedEcalRecHitsEE", "", processName, handleRecHitsEE)
@@ -280,6 +285,7 @@ for event in events:
 
        for electron in electrons:
            print electron.eta()," ",electron.phi()," ",electron.superCluster().energy()," ",electron.superCluster().hitsAndFractions().size()," ",electron.parentSuperCluster().energy()," ",electron.parentSuperCluster().hitsAndFractions().size()
+           print "met: ",met.front().pt()
 
        print "#############################"    
        print "RECHIT:  rawId    energy"
