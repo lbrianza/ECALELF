@@ -9,10 +9,11 @@
 s1       selected    	root://eoscms//eos/cms/store/group/dpg_ecal/alca_ecalcalib/ecalelf/ntuples/13TeV/ALCARECOSIM/DYJetsToLL_M-50_13TeV-Asympt50ns-pythia8_16Jun15_v3/allRange/v3/DYJetsToLL_M-50_13TeV-Asympt50ns-pythia8_16Jun15_v3-allRange.root
 s2	 selected	root://eoscms//eos/cms/store/group/dpg_ecal/alca_ecalcalib/ecalelf/ntuples/13TeV/ALCARECOSIM/DYJetsToLL_M-50_13TeV-StartupFlat10to50-pythia8_11Jun15_v1/allRange/v3/DYJetsToLL_M-50_13TeV-StartupFlat10to50-pythia8_11Jun15_v1-allRange.root
 #s 	selected	root://eoscms//eos/cms/store/group/dpg_ecal/alca_ecalcalib/ecalelf/ntuples/13TeV/ALCARECOSIM/DYJetsToLL_M-50_13TeV-StartupFlat10to50-pythia8_11Jun15_v1/allRange/DYJetsToLL_M-50_13TeV-StartupFlat10to50-pythia8_11Jun15_v1-allRange.root
+d	selected 	root://eoscms//eos/cms/store/group/dpg_ecal/alca_ecalcalib/ecalelf/ntuples/13TeV/ALCARECO/DoubleEG-ZSkim-RUN2015B-21Jul15-v2/251022-251883/251022-251562-Prompt-pfgEcal-noLaserProblem-v3/DoubleEG-ZSkim-RUN2015B-21Jul15-v2-251022-251883.root
+#d 	selected	root://eoscms//eos/cms/store/group/dpg_ecal/alca_ecalcalib/ecalelf/ntuples/13TeV/ALCARERECO/test75x_21Jul2015/DoubleEG-ZSkim-RUN2015B-ALCARAW-21Jul15-v1/251022-251883/test75x_21Jul2015/DoubleEG-ZSkim-RUN2015B-ALCARAW-21Jul15-v1-251022-251883.root
 
-d	pileupHist	/afs/cern.ch/cms/CAF/CMSALCA/ALCA_ECALCALIB/ECALELF/puFiles/190456-208686-13Julv2_Prompt_Moriond2013.69400.observed.root
-s	pileupHist	/afs/cern.ch/cms/CAF/CMSALCA/ALCA_ECALCALIB/ECALELF/puFiles/nPU-Summer12_DD3.observed.root
-d 	selected	root://eoscms//eos/cms/store/group/dpg_ecal/alca_ecalcalib/ecalelf/ntuples/13TeV/Run2015B_TEMP/ntuple_DoubleElectron-ZSkim-RUN2015D-13Jul15-v1.root
+d	pileupHist		/afs/cern.ch/user/l/lbrianza/work/public/xLouie/dataPU.root
+s	pileupHist		/afs/cern.ch/user/l/lbrianza/work/public/xLouie/mcPU.root
 
 ### OLD (2012)
 #s	pileupTree	/afs/cern.ch/cms/CAF/CMSALCA/ALCA_ECALCALIB/ECALELF/puFiles/tree-nPU-Summer12_DD3-190456-203002-13Jul_PromptTS.69400.observed.root

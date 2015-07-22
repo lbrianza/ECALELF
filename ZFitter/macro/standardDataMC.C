@@ -10,21 +10,40 @@
   //  mcLabel_vec.push_back("Powheg");
   //  mcLabel_vec.push_back("Sherpa");
 
-  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "invMass_SC", "(30,60,120)", "EB", "", dataLabel,mcLabel_vec, "invMass_SC", "",outputPath,"invMass_SC",false,false)); i++;
-  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "esEnergySCEle/(rawEnergySCEle+esEnergySCEle)", "(100,0,0.2)", "EB", "", dataLabel,mcLabel_vec, "ES energy fraction: ES/(rawSC+ES)", "",outputPath,"esEnergyFraction",false,false)); i++;
-  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "energySCEle/(rawEnergySCEle+esEnergySCEle)", "(100,0.99,1.15)", "EB-eleID_7-Et_25", "", dataLabel,mcLabel_vec, "Energy corrections F: E_{SC}/(E_{rawSC}+E_{ES})", "",outputPath,"energyCorrections_EB",false,false)); i++;
-  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "energySCEle/(rawEnergySCEle+esEnergySCEle)", "(100,0.99,1.15)", "EE-eleID_7-Et_25", "", dataLabel,mcLabel_vec, "Energy corrections F: E_{SC}/(E_{rawSC}+E_{ES}) ", "",outputPath,"energyCorrections_EE",false,false)); i++;
-  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "nPV", "(30,0,30)", "eleID_7-Et_25", "", dataLabel,mcLabel_vec, "nVtx ", "",outputPath,"nPV",false,false)); i++;
-  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "rho", "(60,-1,29)", "eleID_7-Et_25", "", dataLabel,mcLabel_vec, "#rho ", "",outputPath,"rho",false,false)); i++;
-  // kinematic variables
-  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "energySCEle", "(100,0,200)", "eleID_7", "", dataLabel,mcLabel_vec, "energy SC [GeV] ", "",outputPath,"energySCEle",false,false)); i++;
-  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "etaEle", "(100,-2.5,2.5)", "eleID_7-Et_25", "", dataLabel,mcLabel_vec, "#eta ", "",outputPath,"etaEle",false,false)); i++;
-  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "phiEle", "(100,-3.14,3.14)", "eleID_7-Et_25", "", dataLabel,mcLabel_vec, "#phi ", "",outputPath,"phiEle",false,false)); i++;
-  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "R9Ele", "(100,0.3,1.4)", "EB-eleID_7-Et_25", "", dataLabel,mcLabel_vec, "R_{9} ", "",outputPath,"R9Ele_EB",false,false)); i++;
-  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "R9Ele", "(100,0.3,1.4)", "EB-eleID_7-Et_25", "", dataLabel,mcLabel_vec, "R_{9} ", "",outputPath,"R9Ele_EB-log",true,false)); i++;
-  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "R9Ele", "(100,0.3,1.4)", "EE-eleID_7-Et_25", "", dataLabel,mcLabel_vec, "R_{9} ", "",outputPath,"R9Ele_EE",false,false)); i++;
-  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "R9Ele", "(100,0.3,1.4)", "EE-eleID_7-Et_25", "", dataLabel,mcLabel_vec, "R_{9} ", "",outputPath,"R9Ele_EE-log",true,false)); i++;
+  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "invMass_SC", "(60,60,120)", "Et_25", "", dataLabel,mcLabel_vec, "invMass_SC", "",outputPath,"invMass_SC",false,true)); i++;
+  //  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "invMass_SC_must", "(60,60,120)", "Et_25", "", dataLabel,mcLabel_vec, "invMass_SC_must", "",outputPath,"invMass_SC_must",false,true)); i++;
+  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "invMass_SC", "(60,60,120)", "Et_25-EB", "", dataLabel,mcLabel_vec, "invMass_SC", "",outputPath,"invMass_SC_EB_EB",false,true)); i++;
+  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "invMass_SC", "(60,60,120)", "Et_25-EE", "", dataLabel,mcLabel_vec, "invMass_SC", "",outputPath,"invMass_SC_EE_EE",false,true)); i++;
+  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "invMass_SC", "(60,60,120)", "Et_25-EB", "", dataLabel,mcLabel_vec, "invMass_SC", "",outputPath,"invMass_SC_gold_gold",false,true)); i++;
+  //  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "invMass_SC", "(60,60,120)", "Et_25", "", dataLabel,mcLabel_vec, "invMass_SC", "",outputPath,"invMass_SC_noreweight",false,false)); i++;
 
+  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "nPV", "(30,0,30)", "Et_25", "", dataLabel,mcLabel_vec, "nVtx ", "",outputPath,"nPV_noreweight",false,false)); i++;
+  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "nPV", "(30,0,30)", "Et_25", "", dataLabel,mcLabel_vec, "nVtx ", "",outputPath,"nPV",false,true)); i++;
+
+  /*  
+  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "esEnergySCEle/(rawEnergySCEle+esEnergySCEle)", "(100,0,0.2)", "EB", "", dataLabel,mcLabel_vec, "ES energy fraction: ES/(rawSC+ES)", "",outputPath,"esEnergyFraction",false,true)); i++;
+
+  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "energySCEle/(rawEnergySCEle+esEnergySCEle)", "(100,0.99,1.15)", "EB-Et_25", "", dataLabel,mcLabel_vec, "Energy corrections F: E_{SC}/(E_{rawSC}+E_{ES})", "",outputPath,"energyCorrections_EB",false,true)); i++;
+  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "energySCEle/(rawEnergySCEle+esEnergySCEle)", "(100,0.99,1.15)", "EE-Et_25", "", dataLabel,mcLabel_vec, "Energy corrections F: E_{SC}/(E_{rawSC}+E_{ES}) ", "",outputPath,"energyCorrections_EE",false,true)); i++;
+  */
+
+  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "rho", "(60,-1,29)", "Et_25", "", dataLabel,mcLabel_vec, "#rho ", "",outputPath,"rho",false,true)); i++;
+
+  // kinematic variables
+  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "energySCEle[0]", "(50,0,200)", "Et_25", "", dataLabel,mcLabel_vec, "energy SC [GeV] ", "",outputPath,"energySCEle",false,true)); i++;
+  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "energySCEle[0]", "(50,20,200)", "Et_25-EB", "", dataLabel,mcLabel_vec, "energy SC [GeV] ", "",outputPath,"energySCEle_EB",false,true)); i++;
+  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "energySCEle[0]", "(50,50,400)", "Et_25-EE", "", dataLabel,mcLabel_vec, "energy SC [GeV] ", "",outputPath,"energySCEle_EE",false,true)); i++;
+
+  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "etaEle[0]", "(50,-2.5,2.5)", "Et_25", "", dataLabel,mcLabel_vec, "#eta ", "",outputPath,"etaEle",false,true)); i++;
+  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "phiEle[0]", "(50,-3.14,3.14)", "Et_25", "", dataLabel,mcLabel_vec, "#phi ", "",outputPath,"phiEle",false,true)); i++;
+  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "etaSCEle[0]", "(50,-2.5,2.5)", "Et_25", "", dataLabel,mcLabel_vec, "#eta SC ", "",outputPath,"etaSCEle",false,true)); i++;
+  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "phiSCEle[0]", "(50,-3.14,3.14)", "Et_25", "", dataLabel,mcLabel_vec, "#phi SC ", "",outputPath,"phiSCEle",false,true)); i++;
+
+  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "R9Ele[0]", "(50,0.3,1.4)", "EB-Et_25", "", dataLabel,mcLabel_vec, "R_{9} ", "",outputPath,"R9Ele_EB",false,true)); i++;
+  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "R9Ele[0]", "(50,0.3,1.4)", "EB-Et_25", "", dataLabel,mcLabel_vec, "R_{9} ", "",outputPath,"R9Ele_EB-log",true,true)); i++;
+  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "R9Ele[0]", "(50,0.3,1.4)", "EE-Et_25", "", dataLabel,mcLabel_vec, "R_{9} ", "",outputPath,"R9Ele_EE",false,true)); i++;
+  c[i] = new TCanvas (PlotDataMCs(data,MakeChainVector(signalA), "R9Ele[0]", "(50,0.3,1.4)", "EE-Et_25", "", dataLabel,mcLabel_vec, "R_{9} ", "",outputPath,"R9Ele_EE-log",true,true)); i++;
+  
 /*
 
   TString dataLabel="22Jan ", mcLabel="Simulation";

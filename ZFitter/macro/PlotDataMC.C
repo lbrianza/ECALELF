@@ -637,9 +637,14 @@ TCanvas *PlotDataMCs(TChain *data, std::vector<TChain *> mc_vec, TString branchn
   TCut selection_data="";
   if(category.Sizeof()>1) selection_data = cutter.GetCut(category, false,0,scale);
   selection_data+=selection;
+  //  selection_data+="phiEle[0]!=0 && phiEle[2]!=0 && etaEle[0]!=0 && etaEle[2]!=0";
   TCut selection_MC="";
   if(category.Sizeof()>1) selection_MC = cutter.GetCut(category, false,0);
   selection_MC+=selection;
+  // selection_MC+="phiEle[0]!=0 && phiEle[2]!=0 && etaEle[0]!=0 && etaEle[2]!=0";
+
+  std::cout<<"data: "<<selection_data<<std::endl;
+  std::cout<<"MC:   "<<selection_MC<<std::endl;
 
   if(smear){
     branchNameMC.ReplaceAll("invMass_SC_regrCorr_pho ","(invMass_SC_regrCorr_pho*sqrt(smearEle[0]*smearEle[1]))");
@@ -779,20 +784,20 @@ TCanvas *PlotDataMCs(TChain *data, std::vector<TChain *> mc_vec, TString branchn
 
     if(mcLabel_vec[i] !="") leg->AddEntry(s,mcLabel_vec[i], "lf");
 
-//     TH1F *sRatio = (TH1F *) s->Clone(mcHistName+"_ratio");
-//     sRatio->Divide(d);
-//     if(ratio){
-//       pad2->cd();
-//       if(i==0) sRatio->Draw();
-//       else sRatio->Draw("same");
-//     }
-//     pad1->cd();
-  }
+    //     TH1F *sRatio = (TH1F *) s->Clone(mcHistName+"_ratio");
+    //     sRatio->Divide(d);
+    // if(ratio){
+    //  pad2->cd();
+    //  if(i==0) sRatio->Draw();
+    //  else sRatio->Draw("same");
+    //}
+    // pad1->cd();
+       }
 
   //TH1F* d_norm = s_norm;
   //if(d!=s) d_norm = (TH1F *) (d->DrawNormalized("p same", d->Integral()));
-  if(nHist>0) d->Draw("p same");
-  else d->Draw("p");
+  if(nHist>0) d->Draw("pe same");
+  else d->Draw("pe");
 
 //   std::cout << "Variable  & Data & Simulation \\" << std::endl;
 //   std::cout << "Mean      & " << d->GetMean() << " " << d->GetMeanError() 
@@ -804,11 +809,24 @@ TCanvas *PlotDataMCs(TChain *data, std::vector<TChain *> mc_vec, TString branchn
   
   if(mcLabel_vec.size()!=0) leg->Draw();
 
-  TPaveText *pv = new TPaveText(0.25,0.95,0.65,1,"NDC");
-  pv->AddText("CMS Preliminary 2015");
+  TPaveText *pv = new TPaveText(0.25,0.9,0.65,0.95,"NDC");
+  //  pv->AddText("CMS Preliminary 2015");
+  pv->AddText(label4Print.Data());
   pv->SetFillColor(0);
   pv->SetBorderSize(0);
   pv->Draw();
+
+  TPaveText *pv2 = new TPaveText(0.75,0.9,0.9,0.95,"NDC");
+  pv2->AddText("#sqrt{s}=13 TeV");
+  pv2->SetFillColor(0);
+  pv2->SetBorderSize(0);
+  pv2->Draw("same");
+
+  TPaveText *pv3 = new TPaveText(0.1,0.9,0.25,0.95,"NDC");
+  pv3->AddText("L = 19.636 pb^{-1}");
+  pv3->SetFillColor(0);
+  pv3->SetBorderSize(0);
+  pv3->Draw("same");
 
   watch.Stop();
   watch.Print();

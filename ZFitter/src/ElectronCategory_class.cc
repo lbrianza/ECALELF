@@ -46,6 +46,8 @@ TCut ElectronCategory_class::GetCut(TString region, bool isMC, int nEle, bool co
       cut_string.Insert(0,"(");
       cut_string+="|| runNumber==1)"; 
     }
+    cut_string+="&& abs(chargeEle[1])==1 && phiEle[1]!=0 && etaEle[1]!=0";
+
     if(isMC && cut_string.Contains("lumiBlock")) continue;
     //      std::cout << "[DEBUG] Skipping runNumber cut for MC " << isMC << "\t" << string << std::endl;
 
@@ -92,6 +94,7 @@ TCut ElectronCategory_class::GetCut(TString region, bool isMC, int nEle, bool co
 std::set<TString> ElectronCategory_class::GetCutSet(TString region){
   TCut cut_string;
   cut_string.Clear();
+  cut_string="abs(chargeEle[1])==1 && abs && phiEle[0]!=0 && etaEle[0]!=0";
 
   eleIDMap eleID_map;
 
