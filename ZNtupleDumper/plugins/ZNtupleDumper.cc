@@ -671,6 +671,7 @@ void ZNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
   int nWP70   = 0; //only WP70
   int nMedium = 0; //passing medium eleID
   int nWP90   = 0; //only WP90
+  int nEle    = 0;
 
   if (eventType!=ZMMG) {
     for( pat::ElectronCollection::const_iterator eleIter1 = electronsHandle->begin();
@@ -679,6 +680,7 @@ void ZNtupleDumper::analyze(const edm::Event& iEvent, const edm::EventSetup& iSe
       if( eleIter1->electronID("tight") )       ++nWP70;
       else if( eleIter1->electronID("medium") ) ++nMedium;
       else if( eleIter1->electronID("loose") )  ++nWP90;
+      nEle++;
     }
   }  
   bool doFill=false;
