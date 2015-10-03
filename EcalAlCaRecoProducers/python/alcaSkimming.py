@@ -157,6 +157,9 @@ if (re.match("CMSSW_5_.*",CMSSW_VERSION) or re.match("CMSSW_6_.*",CMSSW_VERSION)
     process.load('Calibration.EcalAlCaRecoProducers.ALCARECOEcalUncalIsolElectron_cff') # ALCARAW
     from Calibration.EcalAlCaRecoProducers.ALCARECOEcalCalIsolElectron_cff import *
 
+from Calibration.EcalAlCaRecoProducers.ALCARECOEcalCalIsolElectron_cff import *
+from Calibration.EcalAlCaRecoProducers.ALCARECOEcalUncalIsolElectron_cff import *
+
 # this module provides:
 #process.seqALCARECOEcalUncalElectron  = uncalibRecHitSeq
 process.load('Calibration.EcalAlCaRecoProducers.sandboxRerecoSeq_cff')    # ALCARERECO
@@ -381,6 +384,15 @@ if (HLTFilter):
     process.ZEEHltFilter.throw = cms.bool(False)
     process.ZEEHltFilter.HLTPaths = [ "HLT_Ele17_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_Ele8_CaloIdT_CaloIsoVL_TrkIdVL_TrkIsoVL_*"]
     process.filterSeq *= process.ZEEHltFilter
+
+
+
+##for the stream                                                                                    
+process.pathALCARECOEcalCalWElectronStream     = cms.Path(seqALCARECOEcalCalWElectronStream)
+process.pathALCARECOEcalUncalWElectronStream   = cms.Path(seqALCARECOEcalUncalWElectronStream)
+process.pathALCARECOEcalCalZElectronStream     = cms.Path(seqALCARECOEcalCalZElectronStream)
+process.pathALCARECOEcalUncalZElectronStream   = cms.Path(seqALCARECOEcalUncalZElectronStream)
+
 
 from HLTrigger.HLTfilters.hltHighLevel_cfi import *
 process.NtupleFilter = copy.deepcopy(hltHighLevel)
