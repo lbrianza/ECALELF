@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: reco -s RAW2DIGI,RECO,ALCA:EcalCalWElectronStream -n 100 --filein=/store/data/Run2016B/AlCaElectron/RAW/v1/000/272/775/00000/363B1493-3114-E611-A9C3-02163E011B18.root --data --conditions=80X_dataRun2_Prompt_v8 --era=Run2_2016 --scenario=pp --nThreads=4 --dirout=./ --no_exec
+# with command line options: reco -s RAW2DIGI,RECO,ALCA:EcalCalWElectronStream -n 100 --filein=/store/data/Run2016B/AlCaElectron/RAW/v1/000/272/775/00000/363B1493-3114-E611-A9C3-02163E011B18.root --data --conditions=80X_dataRun2_Prompt_v8 --era=Run2_2016 --scenario=pp --nThreads=4 --dirout=./ --customise Calibration/EcalAlCaRecoProducers/customElectronStream.StreamReco
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.StandardSequences.Eras import eras
@@ -23,13 +23,12 @@ process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(500)
+    input = cms.untracked.int32(100)
 )
 
 # Input source
 process.source = cms.Source("PoolSource",
-#    fileNames = cms.untracked.vstring('/store/data/Run2016B/AlCaElectron/RAW/v1/000/272/775/00000/363B1493-3114-E611-A9C3-02163E011B18.root'),
-    fileNames = cms.untracked.vstring('/store/data/Run2016H/AlCaElectron/RAW/v1/000/281/613/00000/081A7818-C883-E611-9817-02163E014224.root'),
+    fileNames = cms.untracked.vstring('/store/data/Run2016B/AlCaElectron/RAW/v1/000/272/775/00000/363B1493-3114-E611-A9C3-02163E011B18.root'),
     secondaryFileNames = cms.untracked.vstring()
 )
 
@@ -39,7 +38,7 @@ process.options = cms.untracked.PSet(
 
 # Production Info
 process.configurationMetadata = cms.untracked.PSet(
-    annotation = cms.untracked.string('reco nevts:500'),
+    annotation = cms.untracked.string('reco nevts:100'),
     name = cms.untracked.string('Applications'),
     version = cms.untracked.string('$Revision: 1.19 $')
 )
@@ -141,19 +140,13 @@ process.schedule = cms.Schedule(process.raw2digi_step,process.reconstruction_ste
 process.options.numberOfThreads=cms.untracked.uint32(4)
 process.options.numberOfStreams=cms.untracked.uint32(0)
 
-process.csctfDigis.producer       = cms.InputTag("hltSelectedElectronFEDListProducerGsf:StreamElectronRawFed")
-process.dttfDigis.DTTF_FED_Source = cms.InputTag("hltSelectedElectronFEDListProducerGsf:StreamElectronRawFed")
-process.ecalDigis.InputLabel      = cms.InputTag("hltSelectedElectronFEDListProducerGsf:StreamElectronRawFed")
-process.ecalPreshowerDigis.sourceTag = cms.InputTag("hltSelectedElectronFEDListProducerGsf:StreamElectronRawFed")
-process.castorDigis.InputLabel    = cms.InputTag("hltSelectedElectronFEDListProducerGsf:StreamElectronRawFed")
-process.gctDigis.inputLabel       = cms.InputTag("hltSelectedElectronFEDListProducerGsf:StreamElectronRawFed")
-process.gtDigis.DaqGtInputTag     = cms.InputTag("hltSelectedElectronFEDListProducerGsf:StreamElectronRawFed")
-#process.gtEvmDigis.EvmGtInputTag  = cms.InputTag("hltSelectedElectronFEDListProducerGsf:StreamElectronRawFed")                                                  
-process.hcalDigis.InputLabel      = cms.InputTag("hltSelectedElectronFEDListProducerGsf:StreamElectronRawFed")
-process.muonCSCDigis.InputObjects = cms.InputTag("hltSelectedElectronFEDListProducerGsf:StreamElectronRawFed")
-process.muonDTDigis.inputLabel    = cms.InputTag("hltSelectedElectronFEDListProducerGsf:StreamElectronRawFed")
-process.muonRPCDigis.InputLabel   = cms.InputTag("hltSelectedElectronFEDListProducerGsf:StreamElectronRawFed")
-process.scalersRawToDigi.scalersInputTag = cms.InputTag("hltSelectedElectronFEDListProducerGsf:StreamElectronRawFed")
-process.siPixelDigis.InputLabel   = cms.InputTag("hltSelectedElectronFEDListProducerGsf:StreamElectronRawFed")
-process.siStripDigis.ProductLabel = cms.InputTag("hltSelectedElectronFEDListProducerGsf:StreamElectronRawFed")
+# customisation of the process.
+
+# Automatic addition of the customisation function from Calibration.EcalAlCaRecoProducers.customElectronStream
+from Calibration.EcalAlCaRecoProducers.customElectronStream import StreamReco 
+
+#call to customisation function StreamReco imported from Calibration.EcalAlCaRecoProducers.customElectronStream
+process = StreamReco(process)
+
+# End of customisation functions
 
